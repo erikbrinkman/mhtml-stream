@@ -1,0 +1,16 @@
+# Node #
+########
+/node_modules
+/yarn-error.log
+
+# Jest #
+########
+/coverage
+
+# TypeScript #
+##############
+/tsconfig.tsbuildinfo
+
+# Artifacts #
+#############
+/dist
