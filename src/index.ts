@@ -166,7 +166,7 @@ function decodeLine(line: string): string {
   if (match) {
     const [, charset, encoding, text] = match;
     let buff;
-    /* istanbul ignore else */ 
+    /* istanbul ignore else */
     if (encoding === "Q") {
       buff = decodeQEncoding(text!);
     } else if (encoding === "B") {

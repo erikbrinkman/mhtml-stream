@@ -26,7 +26,8 @@
     "lint": "tsc && eslint 'src/*.ts'",
     "test": "jest --coverage",
     "doc": "typedoc",
-    "build": "tsc -p tsconfig.build.json && esbuild src/index.ts --bundle --minify --format=cjs --outfile=dist/index.cjs.min.js && esbuild src/index.ts --bundle --minify --global-name=mhtmlStream --outfile=dist/index.iife.min.js"
+    "build": "tsc -p tsconfig.build.json && esbuild src/index.ts --bundle --minify --format=cjs --outfile=dist/index.cjs.min.js && esbuild src/index.ts --bundle --minify --global-name=mhtmlStream --outfile=dist/index.iife.min.js",
+    "prepare": "yarn lint && yarn test && yarn build"
   },
   "devDependencies": {
     "@types/node": "^17.0.14",
