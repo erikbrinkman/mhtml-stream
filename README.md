@@ -1,5 +1,6 @@
 MHTML Stream
 ============
+[![build](https://github.com/erikbrinkman/mhtml-stream/actions/workflows/node.js.yml/badge.svg)](https://github.com/erikbrinkman/mhtml-stream/actions/workflows/node.js.yml)
 
 Zero-dependency Library for parsing MHTML data as streams using modern WHATWG
 streams and async iterators. Because it relies on modern cross javascript
