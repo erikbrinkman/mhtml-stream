@@ -1,4 +1,4 @@
-import { decodeBase64 as decodeBEncoding } from "./base64";
+import { toByteArray } from "base64-js";
 import {
   asIterable,
   bytesEqual,
@@ -170,7 +170,7 @@ function decodeLine(line: string): string {
     if (encoding === "Q") {
       buff = decodeQEncoding(text!);
     } else if (encoding === "B") {
-      buff = decodeBEncoding(text!);
+      buff = toByteArray(text!);
     } else {
       // NOTE should be impossible
       throw new Error(

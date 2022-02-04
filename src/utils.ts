@@ -7,7 +7,7 @@
  *
  * @packageDocumentation
  */
-import { decodeBase64 as db64 } from "./base64";
+import { toByteArray } from "base64-js";
 
 /**
  * create a Uint8Array from a buffer
@@ -227,7 +227,7 @@ export async function* decodeBase64(
   lines: AsyncIterable<Uint8Array>
 ): AsyncIterableIterator<Uint8Array> {
   for await (const bytes of lines) {
-    yield db64(decoder.decode(bytes));
+    yield toByteArray(decoder.decode(bytes));
   }
 }
 
