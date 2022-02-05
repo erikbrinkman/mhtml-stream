@@ -22,7 +22,7 @@
   ],
   "type": "module",
   "scripts": {
-    "fmt": "prettier --write 'src/*.ts' '*.json'",
+    "fmt": "prettier --write 'src/*.ts' '*.json' '*.yml'",
     "lint": "tsc && eslint 'src/*.ts'",
     "test": "jest --coverage",
     "doc": "typedoc",
