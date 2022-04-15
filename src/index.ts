@@ -206,8 +206,7 @@ async function parseHeaders(
     const line = decoder.decode(value);
     if (/^\s/.test(line)) {
       // header folded
-      val += " ";
-      val += decodeLine(line.trimStart());
+      val += decodeLine(line.substr(1));
     } else {
       if (key) {
         headers.append(key, val);
@@ -268,7 +267,7 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
   }
   let bound = undefined;
   let multipart = false;
-  for (const field of contentType.split("; ")) {
+  for (const field of contentType.split(/;\s*/)) {
     if (field.startsWith("multipart/")) {
       multipart = true;
     } else if (field.startsWith("boundary=")) {

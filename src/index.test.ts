@@ -23,6 +23,20 @@ Ym9keSBvZiB0aGUgbWVzc2FnZS48L3A+CiAgPC9ib2R5Pgo8L2h0bWw+Cg==
 --frontier--
 `;
 
+const newYorker = `From: <Saved by Blink>
+Snapshot-Content-Location: https://www.newyorker.com/culture/cultural-comment/what-the-twilight-zone-reveals-about-todays-prestige-tv
+Subject: =?utf-8?Q?What=20=E2=80=9CThe=20Twilight=20Zone=E2=80=9D=20Reveals=20Abou?=
+ =?utf-8?Q?t=20Today=E2=80=99s=20Prestige=20TV=20|=20The=20New=20Yorker?=
+Date: Sat, 16 Apr 2022 17:48:31 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--NYswbLinUCqE8KaJecg8DEV6giqFeyGLtHeT0qLB4h----"
+
+
+------MultipartBoundary--NYswbLinUCqE8KaJecg8DEV6giqFeyGLtHeT0qLB4h------
+`;
+
 function stringToStream(file: string): ReadableStream {
   return new ReadableStream({
     start(controller) {
@@ -92,6 +106,30 @@ This is a message with multiple parts in MIME format.
     const expectedText = [
       "This is a message with multiple parts in MIME format.",
     ];
+    expect(text).toEqual(expectedText);
+  });
+
+  test("escaped multi-line headers", async () => {
+    const files = [];
+    for await (const file of parseMhtml(stringToStream(newYorker))) {
+      files.push(file);
+    }
+    const headers = files.map(({ headers }) => Object.fromEntries(headers));
+    const expectedHeaders = [
+      {
+        "Content-Type": `multipart/related;type="text/html";boundary="----MultipartBoundary--NYswbLinUCqE8KaJecg8DEV6giqFeyGLtHeT0qLB4h----"`,
+        Date: "Sat, 16 Apr 2022 17:48:31 -0000",
+        From: "<Saved by Blink>",
+        "MIME-Version": "1.0",
+        "Snapshot-Content-Location":
+          "https://www.newyorker.com/culture/cultural-comment/what-the-twilight-zone-reveals-about-todays-prestige-tv",
+        Subject:
+          "What “The Twilight Zone” Reveals About Today’s Prestige TV | The New Yorker",
+      },
+    ];
+    expect(headers).toEqual(expectedHeaders);
+    const text = files.map(({ content }) => decoder.decode(content));
+    const expectedText = [""];
     expect(text).toEqual(expectedText);
   });
 
