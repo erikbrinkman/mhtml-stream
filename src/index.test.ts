@@ -1,5 +1,6 @@
 import { ReadableStream } from "node:stream/web";
-import { MhtmlHeaders, parseMhtml } from ".";
+import { parseMhtml } from ".";
+import { Headers } from "./headers";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -240,7 +241,7 @@ This is a message with multiple parts in MIME format.
 });
 
 describe("MhtmlHeaders", () => {
-  const headers = new MhtmlHeaders();
+  const headers = new Headers();
   headers.append("a", "b");
   headers.append("a", "c");
   headers.append("d", "e");

@@ -1,7 +1,5 @@
-# Node #
+# Yarn #
 ########
-/node_modules
-/yarn-error.log
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,14 +8,13 @@
 !.yarn/sdks
 !.yarn/versions
 
-# Jest #
-########
-/coverage
-
-# TypeScript #
-##############
-/tsconfig.tsbuildinfo
+# Cache #
+#########
+coverage
+tsconfig.tsbuildinfo
+.eslintcache
 
 # Artifacts #
 #############
-/dist
+dist
+bundle

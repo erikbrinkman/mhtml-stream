@@ -1,4 +1,5 @@
 import { toByteArray } from "base64-js";
+import { Headers, MhtmlHeaders } from "./headers";
 import {
   asIterable,
   bytesEqual,
@@ -9,125 +10,14 @@ import {
   decodeQuotedPrintable,
   splitStream,
 } from "./utils";
+export type { MhtmlHeaders };
 
 // NOTE we use this for ascii because it's faster than manual, but may cause
 // unexpected errors if the assumption is violated
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-/**
- * class for storing headers parse from MHTML
- *
- * Tries to somewhat mimic the behavior of the fetch-api Headers object, with
- * some differences, notably that it does no validation.
- */
-export class MhtmlHeaders {
-  #raw: Map<string, string[]> = new Map();
-
-  [Symbol.iterator](): Iterator<[string, string]> {
-    return this.entries();
-  }
-
-  /**
-   * add a key-value pair
-   *
-   * If key is already present it will be appended.
-   */
-  append(key: string, value: string): void {
-    const list = this.#raw.get(key);
-    if (list === undefined) {
-      this.#raw.set(key, [value]);
-    } else {
-      list.push(value);
-    }
-  }
-
-  /**
-   * iterate over all key-value pairs
-   *
-   * Multiple values for the same key will be joined in the order they were
-   * added by `delim`.
-   */
-  *entries(delim: string = ", "): IterableIterator<[string, string]> {
-    for (const [key, values] of this.#raw.entries()) {
-      yield [key, values.join(delim)];
-    }
-  }
-
-  /**
-   * iterate over all key-value pairs
-   *
-   * Multiple values for the same key will get iterated in the order they were
-   * added.
-   */
-  *entriesAll(): IterableIterator<[string, string]> {
-    for (const [key, values] of this.#raw.entries()) {
-      for (const val of values) {
-        yield [key, val];
-      }
-    }
-  }
-
-  /**
-   * get the value for a key
-   *
-   * If the key is missing, null will be returned, if multiple values for the
-   * key are present, they will be joined be `delim`.
-   */
-  get(key: string, delim: string = ", "): string | null {
-    const vals = this.#raw.get(key);
-    if (vals === undefined) {
-      return null;
-    } else {
-      return vals.join(delim);
-    }
-  }
-
-  /**
-   * get all values for a key
-   */
-  getAll(key: string): string[] {
-    return this.#raw.get(key) ?? [];
-  }
-
-  /**
-   * whether key has any values associated with it
-   */
-  has(key: string): boolean {
-    return this.#raw.has(key);
-  }
-
-  /**
-   * all keys with at least one value
-   */
-  keys(): Iterable<string> {
-    return this.#raw.keys();
-  }
-
-  /**
-   * iterate over all values
-   *
-   * If a key has multiple values they will be joined by `delim`.
-   */
-  *values(delim: string = ", "): IterableIterator<string> {
-    for (const vals of this.#raw.values()) {
-      yield vals.join(delim);
-    }
-  }
-
-  /**
-   * iterate over all values added
-   */
-  *valuesAll(): IterableIterator<string> {
-    for (const vals of this.#raw.values()) {
-      yield* vals;
-    }
-  }
-}
-
-/**
- * decode a q-encoded token
- */
+/** decode a q-encoded token */
 function decodeQEncoding(text: string): Uint8Array {
   const res = new Uint8Array(text.length);
   let destInd = 0;
@@ -157,9 +47,7 @@ function decodeQEncoding(text: string): Uint8Array {
 
 const encodeFormat = /^=\?([^?\s]+)\?([BQ])\?([^?\s]+)\?=$/;
 
-/**
- * decode a header line that may have an extra encoding in it
- */
+/** decode a header line that may have an extra encoding in it */
 function decodeLine(line: string): string {
   // TODO this might make more sense as a function as part of a regex replaceAll
   const match = encodeFormat.exec(line);
@@ -193,7 +81,7 @@ function decodeLine(line: string): string {
 async function parseHeaders(
   iter: AsyncIterator<Uint8Array>
 ): Promise<MhtmlHeaders> {
-  const headers = new MhtmlHeaders();
+  const headers = new Headers();
   let key = "";
   let val = "";
   for (;;) {
@@ -227,17 +115,15 @@ async function parseHeaders(
   }
 }
 
-/**
- * a file that was encoded in MHTML format
- */
+/** a file that was encoded in MHTML format */
 export interface MhtmlFile {
+  /** the files's headers */
   headers: MhtmlHeaders;
+  /** the file's content */
   content: Uint8Array;
 }
 
-/**
- * The decoder of any Content-Transfer-Encoding
- */
+/** The decoder of any Content-Transfer-Encoding */
 export interface Decoder {
   (lines: AsyncIterable<Uint8Array>): AsyncIterable<Uint8Array>;
 }
@@ -289,6 +175,12 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
   return [boundary, terminus];
 }
 
+/** options for mhtml parsing */
+export interface ParseOptions {
+  /** custom decoders for other Content-Transfer-Encodings */
+  decoderOverrides?: Map<string, Decoder>;
+}
+
 /**
  * parse a readable stream into an async iterator of MHTML files
  *
@@ -297,9 +189,7 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
  */
 export async function* parseMhtml(
   stream: ReadableStream<ArrayBuffer>,
-  {
-    decoderOverrides = new Map(),
-  }: { decoderOverrides?: Map<string, Decoder> } = {}
+  { decoderOverrides = new Map() }: ParseOptions = {}
 ): AsyncIterableIterator<MhtmlFile> {
   // initial setup
   const decoders = new Map([
