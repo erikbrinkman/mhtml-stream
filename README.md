@@ -25,3 +25,11 @@ for await (const { headers, content } of parseMhtml(...)) {
   // for how to parse each individual included file.
 }
 ```
+
+Notes
+-----
+
+- As far as I can tell, header folding behavior is not well defined when it
+  comes to whether whitespace should be added when unfolding. This currently
+  uses the first whitespace character to indicate folding, and preservers any
+  others.
