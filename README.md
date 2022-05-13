@@ -2,6 +2,8 @@ MHTML Stream
 ============
 [![build](https://github.com/erikbrinkman/mhtml-stream/actions/workflows/node.js.yml/badge.svg)](https://github.com/erikbrinkman/mhtml-stream/actions/workflows/node.js.yml)
 [![docs](https://img.shields.io/badge/docs-docs-blue)](https://erikbrinkman.github.io/mhtml-stream/)
+[![npm](https://img.shields.io/npm/v/mhtml-stream)](https://www.npmjs.com/package/mhtml-stream)
+[![license](https://img.shields.io/github/license/erikbrinkman/mhtml-stream)](LICENSE)
 
 Zero-dependency library for parsing MHTML data as streams using modern WHATWG
 streams and async iterators. Because it relies on modern cross javascript
