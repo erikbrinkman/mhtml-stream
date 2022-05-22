@@ -1,7 +1,6 @@
 import { toByteArray } from "base64-js";
 import { Headers, MhtmlHeaders } from "./headers";
 import {
-  asIterable,
   bytesEqual,
   collect,
   decodeBase64,
@@ -188,7 +187,7 @@ export interface ParseOptions {
  * own if a Content-Transfer-Encoding isn't handled properly
  */
 export async function* parseMhtml(
-  stream: ReadableStream<ArrayBuffer>,
+  stream: AsyncIterable<ArrayBuffer>,
   { decoderOverrides = new Map() }: ParseOptions = {}
 ): AsyncIterableIterator<MhtmlFile> {
   // initial setup
@@ -197,7 +196,7 @@ export async function* parseMhtml(
     ...decoderOverrides.entries(),
   ]);
   const crlf = new Uint8Array([13, 10]);
-  const lines = splitStream(asIterable(stream), crlf);
+  const lines = splitStream(stream, crlf);
 
   let bound = null;
   let cont = true;

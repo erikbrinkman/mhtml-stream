@@ -1,6 +1,4 @@
-import { ReadableStream } from "node:stream/web";
 import {
-  asIterable,
   bytesEqual,
   collect,
   decodeBinary,
@@ -13,12 +11,6 @@ import {
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-
-function assert(val: unknown): asserts val {
-  if (!val) {
-    throw new Error("unmet assertion");
-  }
-}
 
 async function* toAsyncIterable<T>(items: Iterable<T>): AsyncIterable<T> {
   for (const item of items) {
@@ -107,26 +99,6 @@ describe("bytesEqual()", () => {
     const right = new Uint8Array([0, 1, 2, 3, 4, 6]).subarray(1);
     expect(bytesEqual(left, right)).toBe(false);
   });
-});
-
-test("asIterable()", async () => {
-  const stream = new ReadableStream<Uint8Array>({
-    start(controller) {
-      controller.enqueue(new Uint8Array([1, 2]));
-      controller.enqueue(new Uint8Array([3, 4]));
-      controller.close();
-    },
-  });
-  const chunks = [];
-  for await (const chunk of asIterable(stream)) {
-    chunks.push(chunk);
-  }
-  expect(chunks.length).toEqual(2);
-  const [first, second] = chunks;
-  assert(first !== undefined);
-  expect(bytesEqual(first, new Uint8Array([1, 2]))).toBe(true);
-  assert(second !== undefined);
-  expect(bytesEqual(second, new Uint8Array([3, 4]))).toBe(true);
 });
 
 describe("indexOf()", () => {

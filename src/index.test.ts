@@ -1,4 +1,3 @@
-import { ReadableStream } from "node:stream/web";
 import { parseMhtml } from ".";
 import { Headers } from "./headers";
 
@@ -38,13 +37,10 @@ Content-Type: multipart/related;
 ------MultipartBoundary--NYswbLinUCqE8KaJecg8DEV6giqFeyGLtHeT0qLB4h------
 `;
 
-function stringToStream(file: string): ReadableStream {
-  return new ReadableStream({
-    start(controller) {
-      controller.enqueue(encoder.encode(file.replaceAll("\n", "\r\n")));
-      controller.close();
-    },
-  });
+async function* stringToStream(
+  file: string
+): AsyncIterableIterator<ArrayBuffer> {
+  yield encoder.encode(file.replaceAll("\n", "\r\n"));
 }
 
 describe("parseMhtml()", () => {

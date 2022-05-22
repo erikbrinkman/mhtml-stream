@@ -72,30 +72,6 @@ export function bytesEqual(left: Uint8Array, right: Uint8Array): boolean {
 }
 
 /**
- * convert readable stream to async iterator
- */
-export function asIterable<T extends ArrayBuffer>(
-  stream: ReadableStream<T>
-): AsyncIterable<T> {
-  return {
-    [Symbol.asyncIterator](): AsyncIterator<T> {
-      const reader = stream.getReader();
-      return {
-        // NOTE this complexity is for typescript
-        async next() {
-          const res = await reader.read();
-          if (res.done) {
-            return { done: true, value: undefined };
-          } else {
-            return { done: false, value: res.value };
-          }
-        },
-      };
-    },
-  };
-}
-
-/**
  * Find index of one byte array in another
  */
 export function indexOf(haystack: Uint8Array, needle: Uint8Array): number {
