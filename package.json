@@ -23,7 +23,7 @@
   ],
   "type": "module",
   "scripts": {
-    "fmt": "prettier --write 'src/*.ts' '*.json' bundle.mjs",
+    "fmt": "prettier --cache --write 'src/*.ts' '*.json' bundle.mjs",
     "lint": "tsc && eslint --cache 'src/*.ts' && typedoc --emit none",
     "test": "jest --coverage",
     "doc": "typedoc",
