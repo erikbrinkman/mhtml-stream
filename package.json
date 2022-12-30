@@ -1,6 +1,6 @@
 {
   "name": "mhtml-stream",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Zero dependency stream MHTML parser",
   "keywords": [
     "mhtml",
