@@ -161,7 +161,7 @@ export async function* decodeQuotedPrintable(
       const code = bytes[ind]!;
       if (code >= 128) {
         throw new Error(
-          `got non-ascii character when decoding quoted printable: ${bytes}`
+          `got non-ascii character when decoding quoted printable: ${code}`
         );
       }
       if (code !== 61) {

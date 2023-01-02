@@ -12,6 +12,7 @@ import {
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
+// eslint-disable-next-line @typescript-eslint/require-await
 async function* toAsyncIterable<T>(items: Iterable<T>): AsyncIterable<T> {
   for (const item of items) {
     yield item;
@@ -38,25 +39,25 @@ describe("toBytes()", () => {
 });
 
 describe("bytesEqual()", () => {
-  test("length failure", async () => {
+  test("length failure", () => {
     const left = new Uint8Array([1, 2, 3]);
     const right = new Uint8Array([1, 2, 3, 4]);
     expect(bytesEqual(left, right)).toBe(false);
   });
 
-  test("simple success", async () => {
+  test("simple success", () => {
     const left = new Uint8Array([1, 2, 3]);
     const right = new Uint8Array([1, 2, 3]);
     expect(bytesEqual(left, right)).toBe(true);
   });
 
-  test("simple failure", async () => {
+  test("simple failure", () => {
     const left = new Uint8Array([1, 2, 3]);
     const right = new Uint8Array([1, 2, 4]);
     expect(bytesEqual(left, right)).toBe(false);
   });
 
-  test("fast path success", async () => {
+  test("fast path success", () => {
     const left = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]).subarray(1);
     const right = new Uint8Array([0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7]).subarray(
       5
@@ -64,7 +65,7 @@ describe("bytesEqual()", () => {
     expect(bytesEqual(left, right)).toBe(true);
   });
 
-  test("fast path failure start", async () => {
+  test("fast path failure start", () => {
     const left = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]).subarray(1);
     const right = new Uint8Array([0, 0, 0, 0, 0, 2, 2, 3, 4, 5, 6, 7]).subarray(
       5
@@ -72,7 +73,7 @@ describe("bytesEqual()", () => {
     expect(bytesEqual(left, right)).toBe(false);
   });
 
-  test("fast path failure middle", async () => {
+  test("fast path failure middle", () => {
     const left = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]).subarray(1);
     const right = new Uint8Array([0, 0, 0, 0, 0, 1, 2, 4, 4, 5, 6, 7]).subarray(
       5
@@ -80,7 +81,7 @@ describe("bytesEqual()", () => {
     expect(bytesEqual(left, right)).toBe(false);
   });
 
-  test("fast path failure end", async () => {
+  test("fast path failure end", () => {
     const left = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]).subarray(1);
     const right = new Uint8Array([0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 8]).subarray(
       5
@@ -88,13 +89,13 @@ describe("bytesEqual()", () => {
     expect(bytesEqual(left, right)).toBe(false);
   });
 
-  test("slow path success", async () => {
+  test("slow path success", () => {
     const left = new Uint8Array([1, 2, 3, 4, 5]);
     const right = new Uint8Array([0, 1, 2, 3, 4, 5]).subarray(1);
     expect(bytesEqual(left, right)).toBe(true);
   });
 
-  test("slow path failure", async () => {
+  test("slow path failure", () => {
     const left = new Uint8Array([1, 2, 3, 4, 5]);
     const right = new Uint8Array([0, 1, 2, 3, 4, 6]).subarray(1);
     expect(bytesEqual(left, right)).toBe(false);

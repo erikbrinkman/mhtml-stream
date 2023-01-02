@@ -37,6 +37,7 @@ Content-Type: multipart/related;
 ------MultipartBoundary--NYswbLinUCqE8KaJecg8DEV6giqFeyGLtHeT0qLB4h------
 `;
 
+// eslint-disable-next-line @typescript-eslint/require-await
 async function* stringToStream(
   file: string
 ): AsyncIterableIterator<ArrayBuffer> {

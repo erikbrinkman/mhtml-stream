@@ -61,7 +61,7 @@ function decodeLine(line: string): string {
     } else {
       // NOTE should be impossible
       throw new Error(
-        `unknown encoding for header value encoding: ${encoding}`
+        `unknown encoding for header value encoding: ${encoding!}`
       );
     }
     return new TextDecoder(charset).decode(buff);
@@ -84,6 +84,7 @@ async function parseHeaders(
   let key = "";
   let val = "";
   for (;;) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { done, value } = await iter.next();
     if (done) {
       throw new Error(
@@ -219,6 +220,7 @@ export async function* parseMhtml(
         [Symbol.asyncIterator]() {
           return {
             async next(): Promise<IteratorResult<Uint8Array>> {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               const { done, value } = await lines.next();
               if (done) {
                 throw new Error(
