@@ -125,6 +125,12 @@ export interface MhtmlFile {
 
 /** The decoder of any Content-Transfer-Encoding */
 export interface Decoder {
+  /**
+   * decode lines
+   *
+   * @param lines - each line of raw bytes
+   * @returns data - decoded lines
+   */
   (lines: AsyncIterable<Uint8Array>): AsyncIterable<Uint8Array>;
 }
 
