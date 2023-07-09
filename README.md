@@ -17,6 +17,10 @@ Usage
 import { parseMhtml } from "mhtml-stream";
 
 for await (const { headers, content } of parseMhtml(...)) {
+  // ... : an async iterable of ArrayBuffers. This is very similar to the
+  //   interface of a ReadableStream, but is a little more platform agnostic
+  //   given that node handles streams significantly differently.
+
   // headers : a key-value object with the header information
 
   // content : a Uint8Array of the raw data, if you want as a string, `new
