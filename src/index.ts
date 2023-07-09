@@ -25,7 +25,7 @@ function decodeQEncoding(text: string): Uint8Array {
     let val;
     if (code >= 128) {
       throw new Error(
-        `got non-ascii character when decoding q-quoted word: "${text}"`
+        `got non-ascii character when decoding q-quoted word: "${text}"`,
       );
     } else if (code === 95) {
       // Q encoding replaces underscore with space
@@ -61,7 +61,7 @@ function decodeLine(line: string): string {
     } else {
       // NOTE should be impossible
       throw new Error(
-        `unknown encoding for header value encoding: ${encoding!}`
+        `unknown encoding for header value encoding: ${encoding!}`,
       );
     }
     return new TextDecoder(charset).decode(buff);
@@ -78,7 +78,7 @@ function decodeLine(line: string): string {
  * keys instead of storing multiple
  */
 async function parseHeaders(
-  iter: AsyncIterator<Uint8Array>
+  iter: AsyncIterator<Uint8Array>,
 ): Promise<MhtmlHeaders> {
   const headers = new Headers();
   let key = "";
@@ -88,7 +88,7 @@ async function parseHeaders(
     const { done, value } = await iter.next();
     if (done) {
       throw new Error(
-        "didn't find an empty line to signify the end of header parsing"
+        "didn't find an empty line to signify the end of header parsing",
       );
     }
     const line = decoder.decode(value);
@@ -103,7 +103,7 @@ async function parseHeaders(
         const delim = line.indexOf(": ");
         if (delim === -1) {
           throw new Error(
-            `header line didn't have key-value delimiter: "${line}"`
+            `header line didn't have key-value delimiter: "${line}"`,
           );
         }
         key = line.slice(0, delim);
@@ -153,8 +153,8 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
   if (contentType === null) {
     throw new Error(
       `first headers didn't contain a content type: ${JSON.stringify(
-        Object.fromEntries(headers)
-      )}`
+        Object.fromEntries(headers),
+      )}`,
     );
   }
   let bound = undefined;
@@ -172,7 +172,7 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
   }
   if (!multipart || bound === undefined) {
     throw new Error(
-      `first content type header didn't contain 'multipart/...' and a boundary string`
+      `first content type header didn't contain 'multipart/...' and a boundary string`,
     );
   }
 
@@ -195,7 +195,7 @@ export interface ParseOptions {
  */
 export async function* parseMhtml(
   stream: AsyncIterable<ArrayBuffer>,
-  { decoderOverrides = new Map() }: ParseOptions = {}
+  { decoderOverrides = new Map() }: ParseOptions = {},
 ): AsyncIterableIterator<MhtmlFile> {
   // initial setup
   const decoders = new Map([
@@ -231,8 +231,8 @@ export async function* parseMhtml(
               if (done) {
                 throw new Error(
                   `stream didn't end with the appropriate termination boundary: ${decoder.decode(
-                    terminus
-                  )}`
+                    terminus,
+                  )}`,
                 );
               } else if (bytesEqual(value, boundary)) {
                 return { done: true, value: undefined };
@@ -245,7 +245,7 @@ export async function* parseMhtml(
             },
           };
         },
-      })
+      }),
     );
 
     yield { headers, content };

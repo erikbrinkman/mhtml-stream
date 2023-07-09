@@ -60,7 +60,7 @@ describe("bytesEqual()", () => {
   test("fast path success", () => {
     const left = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]).subarray(1);
     const right = new Uint8Array([0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7]).subarray(
-      5
+      5,
     );
     expect(bytesEqual(left, right)).toBe(true);
   });
@@ -68,7 +68,7 @@ describe("bytesEqual()", () => {
   test("fast path failure start", () => {
     const left = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]).subarray(1);
     const right = new Uint8Array([0, 0, 0, 0, 0, 2, 2, 3, 4, 5, 6, 7]).subarray(
-      5
+      5,
     );
     expect(bytesEqual(left, right)).toBe(false);
   });
@@ -76,7 +76,7 @@ describe("bytesEqual()", () => {
   test("fast path failure middle", () => {
     const left = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]).subarray(1);
     const right = new Uint8Array([0, 0, 0, 0, 0, 1, 2, 4, 4, 5, 6, 7]).subarray(
-      5
+      5,
     );
     expect(bytesEqual(left, right)).toBe(false);
   });
@@ -84,7 +84,7 @@ describe("bytesEqual()", () => {
   test("fast path failure end", () => {
     const left = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]).subarray(1);
     const right = new Uint8Array([0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 8]).subarray(
-      5
+      5,
     );
     expect(bytesEqual(left, right)).toBe(false);
   });
@@ -159,7 +159,7 @@ test("collect()", async () => {
       new Uint8Array([0, 1]),
       new Uint8Array([2, 3, 4]),
       new Uint8Array([5, 6]),
-    ])
+    ]),
   );
   const expected = new Uint8Array([0, 1, 2, 3, 4, 5, 6]);
   expect(bytesEqual(res, expected)).toBe(true);
@@ -171,19 +171,19 @@ describe("decodeQuotedPrintable()", () => {
     const res = decoder.decode(
       await collect(
         decodeQuotedPrintable(
-          toAsyncIterable(input.map((l) => encoder.encode(l)))
-        )
-      )
+          toAsyncIterable(input.map((l) => encoder.encode(l))),
+        ),
+      ),
     );
     expect(res).toStrictEqual(
-      "key=value\nthis line continues on the next line\n"
+      "key=value\nthis line continues on the next line\n",
     );
   });
 
   test("ascii failure", async () => {
     const input = ["\xff"];
     const decoded = decodeQuotedPrintable(
-      toAsyncIterable(input.map((l) => encoder.encode(l)))
+      toAsyncIterable(input.map((l) => encoder.encode(l))),
     );
     await expect(async () => {
       for await (const _ of decoded) {
@@ -195,7 +195,7 @@ describe("decodeQuotedPrintable()", () => {
   test("encoding failure", async () => {
     const input = ["a=0"];
     const decoded = decodeQuotedPrintable(
-      toAsyncIterable(input.map((l) => encoder.encode(l)))
+      toAsyncIterable(input.map((l) => encoder.encode(l))),
     );
     await expect(async () => {
       for await (const _ of decoded) {
@@ -209,8 +209,8 @@ test("decodeIdentity()", async () => {
   const input = ["line ", "not ascii \xff"];
   const res = decoder.decode(
     await collect(
-      decodeIdentity(toAsyncIterable(input.map((l) => encoder.encode(l))))
-    )
+      decodeIdentity(toAsyncIterable(input.map((l) => encoder.encode(l)))),
+    ),
   );
   expect(res).toStrictEqual("line not ascii \xff");
 });

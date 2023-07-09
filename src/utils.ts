@@ -37,12 +37,12 @@ export function bytesEqual(left: Uint8Array, right: Uint8Array): boolean {
     const left32 = new Uint32Array(
       left.buffer,
       left.byteOffset + begin,
-      fourLen
+      fourLen,
     );
     const right32 = new Uint32Array(
       right.buffer,
       right.byteOffset + begin,
-      fourLen
+      fourLen,
     );
     for (let i = 0; i < begin; ++i) {
       if (left[i] !== right[i]) {
@@ -98,7 +98,7 @@ export function indexOf(haystack: Uint8Array, needle: Uint8Array): number {
  */
 export async function* splitStream(
   iter: AsyncIterable<ArrayBuffer>,
-  split: Uint8Array
+  split: Uint8Array,
 ): AsyncIterableIterator<Uint8Array> {
   let current = new Uint8Array(0);
   for await (const chunk of iter) {
@@ -131,7 +131,7 @@ function concat(chunks: Uint8Array[]): Uint8Array {
  * collect an async iterable of buffers into one
  */
 export async function collect(
-  stream: AsyncIterable<Uint8Array>
+  stream: AsyncIterable<Uint8Array>,
 ): Promise<Uint8Array> {
   const chunks = [];
   for await (const chunk of stream) {
@@ -151,7 +151,7 @@ const defaultNewLine = new Uint8Array([10]);
  */
 export async function* decodeQuotedPrintable(
   lines: AsyncIterable<Uint8Array>,
-  newLine: Uint8Array = defaultNewLine
+  newLine: Uint8Array = defaultNewLine,
 ): AsyncIterableIterator<Uint8Array> {
   for await (const bytes of lines) {
     const res = new Uint8Array(bytes.length + newLine.length);
@@ -161,7 +161,7 @@ export async function* decodeQuotedPrintable(
       const code = bytes[ind]!;
       if (code >= 128) {
         throw new Error(
-          `got non-ascii character when decoding quoted printable: ${code}`
+          `got non-ascii character when decoding quoted printable: ${code}`,
         );
       }
       if (code !== 61) {
@@ -176,7 +176,7 @@ export async function* decodeQuotedPrintable(
           const second = bytes[++ind];
           if (second === undefined) {
             throw new Error(
-              "quoted printable escape (=) was not followed by two bytes"
+              "quoted printable escape (=) was not followed by two bytes",
             );
           }
           let val = parseInt(String.fromCharCode(first), 16);
@@ -200,7 +200,7 @@ const decoder = new TextDecoder();
  * decoder for base64
  */
 export async function* decodeBase64(
-  lines: AsyncIterable<Uint8Array>
+  lines: AsyncIterable<Uint8Array>,
 ): AsyncIterableIterator<Uint8Array> {
   for await (const bytes of lines) {
     yield toByteArray(decoder.decode(bytes));
@@ -211,7 +211,7 @@ export async function* decodeBase64(
  * decoder for 7bit and 8bit
  */
 export async function* decodeIdentity(
-  lines: AsyncIterable<Uint8Array>
+  lines: AsyncIterable<Uint8Array>,
 ): AsyncIterableIterator<Uint8Array> {
   for await (const bytes of lines) {
     yield bytes;
@@ -226,6 +226,6 @@ export async function* decodeIdentity(
  */
 export function decodeBinary(): never {
   throw new Error(
-    "binary transfer-encoding is explicitly not supported and trying to add an implementation will likely result in unexpected results, but if you want to ignore anyway, set binary to `decode8bit`"
+    "binary transfer-encoding is explicitly not supported and trying to add an implementation will likely result in unexpected results, but if you want to ignore anyway, set binary to `decode8bit`",
   );
 }

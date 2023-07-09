@@ -39,7 +39,7 @@ Content-Type: multipart/related;
 
 // eslint-disable-next-line @typescript-eslint/require-await
 async function* stringToStream(
-  file: string
+  file: string,
 ): AsyncIterableIterator<ArrayBuffer> {
   yield encoder.encode(file.replaceAll("\n", "\r\n"));
 }
@@ -151,7 +151,7 @@ Subject: =?iso-8859-1?Q?=A1Hola,\xffse=F1or!?=
         //
       }
     }).rejects.toThrow(
-      "didn't find an empty line to signify the end of header parsing"
+      "didn't find an empty line to signify the end of header parsing",
     );
   });
 
@@ -232,7 +232,7 @@ This is a message with multiple parts in MIME format.
         //
       }
     }).rejects.toThrow(
-      "stream didn't end with the appropriate termination boundary"
+      "stream didn't end with the appropriate termination boundary",
     );
   });
 });
