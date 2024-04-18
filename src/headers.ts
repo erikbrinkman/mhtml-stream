@@ -16,9 +16,9 @@ export interface MhtmlHeaders extends Iterable<[string, string]> {
    * iterate over all key-value pairs
    *
    * Multiple values for the same key will be joined in the order they were
-   * added by `delim`.
+   * added by `delimiter`.
    */
-  entries(delim?: string): IterableIterator<[string, string]>;
+  entries(delimiter?: string): IterableIterator<[string, string]>;
 
   /**
    * iterate over all key-value pairs
@@ -32,9 +32,9 @@ export interface MhtmlHeaders extends Iterable<[string, string]> {
    * get the value for a key
    *
    * If the key is missing, null will be returned, if multiple values for the
-   * key are present, they will be joined be `delim`.
+   * key are present, they will be joined be `delimiter`.
    */
-  get(key: string, delim?: string): string | null;
+  get(key: string, delimiter?: string): string | null;
 
   /** get all values for a key */
   getAll(key: string): string[];
@@ -48,16 +48,16 @@ export interface MhtmlHeaders extends Iterable<[string, string]> {
   /**
    * iterate over all values
    *
-   * If a key has multiple values they will be joined by `delim`.
+   * If a key has multiple values they will be joined by `delimiter`.
    */
-  values(delim?: string): IterableIterator<string>;
+  values(delimiter?: string): IterableIterator<string>;
 
   /** iterate over all values added */
   valuesAll(): IterableIterator<string>;
 }
 
 export class Headers implements MhtmlHeaders {
-  #raw: Map<string, string[]> = new Map();
+  #raw = new Map<string, string[]>();
 
   [Symbol.iterator](): Iterator<[string, string]> {
     return this.entries();

@@ -53,16 +53,11 @@ function decodeLine(line: string): string {
   if (match) {
     const [, charset, encoding, text] = match;
     let buff;
-    /* istanbul ignore else */
     if (encoding === "Q") {
       buff = decodeQEncoding(text!);
-    } else if (encoding === "B") {
-      buff = toByteArray(text!);
     } else {
-      // NOTE should be impossible
-      throw new Error(
-        `unknown encoding for header value encoding: ${encoding!}`,
-      );
+      // encoding === "B"
+      buff = toByteArray(text!);
     }
     return new TextDecoder(charset).decode(buff);
   } else {
@@ -123,16 +118,14 @@ export interface MhtmlFile {
   content: Uint8Array;
 }
 
-/** The decoder of any Content-Transfer-Encoding */
-export interface Decoder {
-  /**
-   * decode lines
-   *
-   * @param lines - each line of raw bytes
-   * @returns data - decoded lines
-   */
-  (lines: AsyncIterable<Uint8Array>): AsyncIterable<Uint8Array>;
-}
+/** The decoder of any Content-Transfer-Encoding
+ *
+ * @param lines - each line of raw bytes
+ * @returns data - decoded lines
+ */
+export type Decoder = (
+  lines: AsyncIterable<Uint8Array>,
+) => AsyncIterable<Uint8Array>;
 
 // Default decoders
 const defaultDecoders = new Map<string, Decoder>([
@@ -143,6 +136,7 @@ const defaultDecoders = new Map<string, Decoder>([
   ["binary", decodeBinary],
 ]);
 
+// eslint-disable-next-line spellcheck/spell-checker
 /**
  * extract the boundary condition from a multipart header
  *
@@ -183,6 +177,7 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
 
 /** options for mhtml parsing */
 export interface ParseOptions {
+  // eslint-disable-next-line spellcheck/spell-checker
   /** custom decoders for other Content-Transfer-Encodings */
   decoderOverrides?: Map<string, Decoder>;
 }
@@ -194,7 +189,7 @@ export interface ParseOptions {
  * own if a Content-Transfer-Encoding isn't handled properly
  */
 export async function* parseMhtml(
-  stream: AsyncIterable<ArrayBuffer>,
+  stream: AsyncIterable<Uint8Array>,
   { decoderOverrides = new Map() }: ParseOptions = {},
 ): AsyncIterableIterator<MhtmlFile> {
   // initial setup
@@ -208,6 +203,7 @@ export async function* parseMhtml(
   let bound = null;
   let cont = true;
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (cont) {
     // parse out headers and get encoding for content
     const headers = await parseHeaders(lines);

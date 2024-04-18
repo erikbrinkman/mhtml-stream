@@ -1,3 +1,4 @@
+import { describe, expect, test } from "bun:test";
 import {
   bytesEqual,
   collect,
@@ -6,7 +7,6 @@ import {
   decodeQuotedPrintable,
   indexOf,
   splitStream,
-  toBytes,
 } from "./utils";
 
 const encoder = new TextEncoder();
@@ -18,25 +18,6 @@ async function* toAsyncIterable<T>(items: Iterable<T>): AsyncIterable<T> {
     yield item;
   }
 }
-
-describe("toBytes()", () => {
-  const base = new Uint8Array([1, 2, 3, 4]);
-
-  test("works on raw buffer", () => {
-    const res = toBytes(base.buffer);
-    expect(bytesEqual(res, base)).toBe(true);
-  });
-
-  test("works on raw buffer of view", () => {
-    const res = toBytes(base.subarray(1, 3).buffer);
-    expect(bytesEqual(res, base)).toBe(true);
-  });
-
-  test("works on sub array", () => {
-    const res = toBytes(base.subarray(1, 3));
-    expect(bytesEqual(res, new Uint8Array([2, 3]))).toBe(true);
-  });
-});
 
 describe("bytesEqual()", () => {
   test("length failure", () => {
@@ -167,6 +148,7 @@ test("collect()", async () => {
 
 describe("decodeQuotedPrintable()", () => {
   test("success", async () => {
+    // eslint-disable-next-line spellcheck/spell-checker
     const input = ["key=3Dvalue", "this line continues =", "on the next line"];
     const res = decoder.decode(
       await collect(
@@ -185,11 +167,14 @@ describe("decodeQuotedPrintable()", () => {
     const decoded = decodeQuotedPrintable(
       toAsyncIterable(input.map((l) => encoder.encode(l))),
     );
-    await expect(async () => {
-      for await (const _ of decoded) {
-        //
-      }
-    }).rejects.toThrow("non-ascii");
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
+    await expect(
+      (async () => {
+        for await (const _ of decoded) {
+          //
+        }
+      })(),
+    ).rejects.toThrow("non-ascii");
   });
 
   test("encoding failure", async () => {
@@ -197,11 +182,14 @@ describe("decodeQuotedPrintable()", () => {
     const decoded = decodeQuotedPrintable(
       toAsyncIterable(input.map((l) => encoder.encode(l))),
     );
-    await expect(async () => {
-      for await (const _ of decoded) {
-        //
-      }
-    }).rejects.toThrow("quoted printable escape");
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
+    await expect(
+      (async () => {
+        for await (const _ of decoded) {
+          //
+        }
+      })(),
+    ).rejects.toThrow("quoted printable escape");
   });
 });
 

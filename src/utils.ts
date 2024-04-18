@@ -10,20 +10,6 @@
 import { toByteArray } from "base64-js";
 
 /**
- * create a Uint8Array from a buffer
- *
- * This method is necessary since creating a Uint8Array from a view will copy
- * the elements instead of creating a view of the underling buffer.
- */
-export function toBytes(buff: ArrayBuffer): Uint8Array {
-  if (ArrayBuffer.isView(buff)) {
-    return new Uint8Array(buff.buffer, buff.byteOffset, buff.byteLength);
-  } else {
-    return new Uint8Array(buff);
-  }
-}
-
-/**
  * Compare two byte arrays for equality
  */
 export function bytesEqual(left: Uint8Array, right: Uint8Array): boolean {
@@ -97,13 +83,12 @@ export function indexOf(haystack: Uint8Array, needle: Uint8Array): number {
  * where each value is delimited by the split sequence.
  */
 export async function* splitStream(
-  iter: AsyncIterable<ArrayBuffer>,
+  iter: AsyncIterable<Uint8Array>,
   split: Uint8Array,
 ): AsyncIterableIterator<Uint8Array> {
   let current = new Uint8Array(0);
   for await (const chunk of iter) {
-    const next = toBytes(chunk);
-    current = current.length ? concat([current, next]) : next;
+    current = current.length ? concat([current, chunk]) : chunk;
     let nextInd;
     while ((nextInd = indexOf(current, split)) !== -1) {
       yield current.subarray(0, nextInd);
