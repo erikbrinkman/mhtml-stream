@@ -89,7 +89,7 @@ async function parseHeaders(
     const line = decoder.decode(value);
     if (/^\s/.test(line)) {
       // header folded
-      val += decodeLine(line.substr(1));
+      val += decodeLine(line.substring(1));
     } else {
       if (key) {
         headers.append(key, val);
