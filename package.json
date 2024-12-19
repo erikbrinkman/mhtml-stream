@@ -15,6 +15,7 @@
   "type": "module",
   "types": "dist/index.d.ts",
   "module": "dist/mhtml.esm.min.js",
+  "exports": "./dist/mhtml.esm.min.js",
   "files": [
     "/dist/**/*.js",
     "/dist/**/*.d.ts"
