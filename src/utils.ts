@@ -88,7 +88,7 @@ export async function* splitStream(
 ): AsyncIterableIterator<Uint8Array> {
   let current = new Uint8Array(0);
   for await (const chunk of iter) {
-    current = current.length ? concat([current, chunk]) : chunk;
+    current = current.length ? concat([current, chunk]) : chunk as Uint8Array<ArrayBuffer>;
     let nextInd;
     while ((nextInd = indexOf(current, split)) !== -1) {
       yield current.subarray(0, nextInd);
@@ -101,7 +101,7 @@ export async function* splitStream(
 /**
  * concatenate multiple buffers
  */
-function concat(chunks: Uint8Array[]): Uint8Array {
+function concat(chunks: Uint8Array[]): Uint8Array<ArrayBuffer> {
   const totalBytes = chunks.reduce((t, c) => t + c.length, 0);
   const res = new Uint8Array(totalBytes);
   let offset = 0;
