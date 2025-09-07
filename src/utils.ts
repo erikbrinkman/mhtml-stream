@@ -88,8 +88,10 @@ export async function* splitStream(
 ): AsyncIterableIterator<Uint8Array> {
   let current = new Uint8Array(0);
   for await (const chunk of iter) {
-    current = current.length ? concat([current, chunk]) : chunk as Uint8Array<ArrayBuffer>;
-    let nextInd;
+    current = current.length
+      ? concat([current, chunk])
+      : (chunk as Uint8Array<ArrayBuffer>);
+    let nextInd: number;
     while ((nextInd = indexOf(current, split)) !== -1) {
       yield current.subarray(0, nextInd);
       current = current.subarray(nextInd + split.length);

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
-import { argv } from "bun";
+
 import { mkdir } from "node:fs/promises";
+import { argv } from "bun";
 import yargs from "yargs";
 import { parseMhtml } from ".";
 

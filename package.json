@@ -22,8 +22,8 @@
   ],
   "scripts": {
     "cli": "bun src/cli.ts",
-    "fmt": "prettier --cache --write 'src/*.ts' '*.{js,json}'",
-    "lint": "tsc && eslint --cache 'src/*.ts' && typedoc --emit none",
+    "fmt": "biome format --write",
+    "lint": "tsc && biome check && typedoc --emit none",
     "doc": "typedoc",
     "export": "tsc -p tsconfig.build.json && bun build src/index.ts --minify --outfile dist/mhtml.esm.min.js",
     "prepack": "bun lint && bun test --coverage && bun export"
@@ -32,68 +32,12 @@
     "base64-js": "^1.5.1"
   },
   "devDependencies": {
-    "@types/base64-js": "^1.3.2",
-    "@types/bun": "^1.1.14",
+    "@biomejs/biome": "^2.2.3",
+    "@types/base64-js": "^1.5.0",
+    "@types/bun": "^1.2.21",
     "@types/yargs": "^17.0.33",
-    "eslint": "^9.17.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-spellcheck": "^0.0.20",
-    "eslint-plugin-tsdoc": "^0.4.0",
-    "prettier": "^3.4.2",
-    "prettier-plugin-organize-imports": "^4.1.0",
-    "typedoc": "^0.27.5",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.18.1",
-    "yargs": "^17.7.2"
-  },
-  "eslintConfig": {
-    "rules": {
-      "@typescript-eslint/no-inferrable-types": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          "varsIgnorePattern": "^_+$"
-        }
-      ],
-      "prefer-const": [
-        "error",
-        {
-          "destructuring": "all"
-        }
-      ],
-      "no-warning-comments": [
-        "error",
-        {
-          "terms": [
-            "fixme"
-          ],
-          "location": "anywhere"
-        }
-      ],
-      "spellcheck/spell-checker": [
-        "error",
-        {
-          "identifiers": false,
-          "skipIfMatch": [
-            "[^\\s]{20,}"
-          ],
-          "skipWords": [
-            "0x7fffffff",
-            "Chr",
-            "Dvalue",
-            "Hola",
-            "Mhtml",
-            "Today’s",
-            "Uint",
-            "Yorker",
-            "ascii",
-            "delim",
-            "multipart",
-            "versa"
-          ]
-        }
-      ]
-    }
+    "typedoc": "^0.28.12",
+    "typescript": "~5.9.2",
+    "yargs": "^18.0.0"
   }
 }
