@@ -1,5 +1,5 @@
 import { toByteArray } from "base64-js";
-import { Headers, MhtmlHeaders } from "./headers";
+import { Headers, type MhtmlHeaders } from "./headers";
 import {
   bytesEqual,
   collect,
@@ -22,7 +22,7 @@ function decodeQEncoding(text: string): Uint8Array {
   let destInd = 0;
   for (let ind = 0; ind < text.length; ++ind) {
     const code = text.charCodeAt(ind);
-    let val;
+    let val: number;
     if (code >= 128) {
       throw new Error(
         `got non-ascii character when decoding q-quoted word: "${text}"`,
@@ -52,7 +52,7 @@ function decodeLine(line: string): string {
   const match = encodeFormat.exec(line);
   if (match) {
     const [, charset, encoding, text] = match;
-    let buff;
+    let buff: Uint8Array;
     if (encoding === "Q") {
       buff = decodeQEncoding(text!);
     } else {
@@ -151,7 +151,7 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
       )}`,
     );
   }
-  let bound = undefined;
+  let bound: string | undefined;
   let multipart = false;
   for (const field of contentType.split(/;\s*/)) {
     if (field.startsWith("multipart/")) {
