@@ -13,9 +13,15 @@
   "author": "Erik Brinkman <erik.brinkman@gmail.com>",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "types": "dist/index.d.ts",
   "module": "dist/mhtml.esm.min.js",
-  "exports": "./dist/mhtml.esm.min.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/mhtml.esm.min.js"
+    }
+  },
   "files": [
     "/dist/**/*.js",
     "/dist/**/*.d.ts"
@@ -23,7 +29,7 @@
   "scripts": {
     "cli": "bun src/cli.ts",
     "fmt": "biome format --write",
-    "lint": "tsc && biome check && typedoc --emit none",
+    "lint": "tsc && biome check && publint && typedoc --emit none",
     "doc": "typedoc",
     "export": "tsc -p tsconfig.build.json && bun build src/index.ts --minify --outfile dist/mhtml.esm.min.js",
     "prepack": "bun lint && bun test --coverage && bun export"
@@ -36,6 +42,7 @@
     "@types/base64-js": "^1.5.0",
     "@types/bun": "^1.2.21",
     "@types/yargs": "^17.0.33",
+    "publint": "^0.3.21",
     "typedoc": "^0.28.12",
     "typescript": "~5.9.2",
     "yargs": "^18.0.0"
