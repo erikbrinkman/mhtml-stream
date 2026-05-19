@@ -9,6 +9,7 @@ import {
   decodeQuotedPrintable,
   splitStream,
 } from "./utils";
+
 export type { MhtmlHeaders };
 
 // NOTE we use this for ascii because it's faster than manual, but may cause
