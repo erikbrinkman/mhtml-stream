@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/erikbrinkman/mhtml-stream.git"
   },
+  "homepage": "https://erikbrinkman.github.io/mhtml-stream/",
   "author": "Erik Brinkman <erik.brinkman@gmail.com>",
   "license": "MIT",
   "type": "module",
