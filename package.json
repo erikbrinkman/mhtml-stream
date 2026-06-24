@@ -1,6 +1,6 @@
 {
   "name": "mhtml-stream",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Zero dependency stream MHTML parser",
   "keywords": [
     "mhtml",
@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/erikbrinkman/mhtml-stream.git"
   },
+  "homepage": "https://erikbrinkman.github.io/mhtml-stream/",
   "author": "Erik Brinkman <erik.brinkman@gmail.com>",
   "license": "MIT",
   "type": "module",
