@@ -155,6 +155,35 @@ Subject: =?iso-8859-1?Q?=A1Hola,\xffse=F1or!?=
     );
   });
 
+  test("matches header names and encodings case-insensitively", async () => {
+    const content = `mime-version: 1.0
+content-type: MULTIPART/mixed; BOUNDARY=frontier
+
+--frontier
+content-type: application/octet-stream
+content-transfer-encoding: Base64
+
+aGVsbG8gd29ybGQ=
+--frontier--
+`;
+    const files = [];
+    for await (const file of parseMhtml(stringToStream(content))) {
+      files.push(file);
+    }
+    const headers = files.map(({ headers }) => Object.fromEntries(headers));
+    expect(headers).toEqual([
+      {
+        "mime-version": "1.0",
+        "content-type": "MULTIPART/mixed; BOUNDARY=frontier",
+      },
+      {
+        "content-type": "application/octet-stream",
+        "content-transfer-encoding": "Base64",
+      },
+    ]);
+    expect(decoder.decode(files[1]!.content)).toStrictEqual("hello world");
+  });
+
   test("accepts headers without a space after the colon", async () => {
     const content = `MIME-Version:1.0
 Content-Type:multipart/mixed; boundary=frontier
