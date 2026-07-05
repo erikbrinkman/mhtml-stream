@@ -86,7 +86,6 @@ async function parseHeaders(
   let key = "";
   let val = "";
   for (;;) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { done, value } = await iter.next();
     if (done) {
       throw new Error(
@@ -143,7 +142,6 @@ const defaultDecoders = new Map<string, Decoder>([
   ["binary", decodeBinary],
 ]);
 
-// eslint-disable-next-line spellcheck/spell-checker
 /**
  * extract the boundary condition from a multipart header
  *
@@ -187,7 +185,6 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
 
 /** options for mhtml parsing */
 export interface ParseOptions {
-  // eslint-disable-next-line spellcheck/spell-checker
   /**
    * custom decoders keyed by (lowercased) Content-Transfer-Encoding
    *
@@ -234,7 +231,6 @@ export async function* parseMhtml(
   let bound = null;
   let cont = true;
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (cont) {
     // parse out headers and get encoding for content
     const headers = await parseHeaders(lines);
@@ -255,7 +251,6 @@ export async function* parseMhtml(
         [Symbol.asyncIterator]() {
           return {
             async next(): Promise<IteratorResult<Uint8Array>> {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               const { done, value } = await lines.next();
               if (done) {
                 throw new Error(

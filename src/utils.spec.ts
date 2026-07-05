@@ -12,7 +12,6 @@ import {
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function* toAsyncIterable<T>(items: Iterable<T>): AsyncIterable<T> {
   for (const item of items) {
     yield item;
@@ -148,7 +147,6 @@ test("collect()", async () => {
 
 describe("decodeQuotedPrintable()", () => {
   test("success", async () => {
-    // eslint-disable-next-line spellcheck/spell-checker
     const input = ["key=3Dvalue", "this line continues =", "on the next line"];
     const res = decoder.decode(
       await collect(
@@ -163,7 +161,6 @@ describe("decodeQuotedPrintable()", () => {
   });
 
   test("normalizes to a custom separator when given one", async () => {
-    // eslint-disable-next-line spellcheck/spell-checker
     const input = ["key=3Dvalue", "this line continues =", "on the next line"];
     const res = decoder.decode(
       await collect(
@@ -183,7 +180,6 @@ describe("decodeQuotedPrintable()", () => {
     const decoded = decodeQuotedPrintable(
       toAsyncIterable(input.map((l) => encoder.encode(l))),
     );
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(
       (async () => {
         for await (const _ of decoded) {
@@ -198,7 +194,6 @@ describe("decodeQuotedPrintable()", () => {
     const decoded = decodeQuotedPrintable(
       toAsyncIterable(input.map((l) => encoder.encode(l))),
     );
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(
       (async () => {
         for await (const _ of decoded) {
@@ -213,7 +208,6 @@ describe("decodeQuotedPrintable()", () => {
     const decoded = decodeQuotedPrintable(
       toAsyncIterable(input.map((l) => encoder.encode(l))),
     );
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(
       (async () => {
         for await (const _ of decoded) {
