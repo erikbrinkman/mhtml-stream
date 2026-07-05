@@ -55,7 +55,6 @@ const encodeFormat = /^=\?([^?\s]+)\?([BQ])\?([^?\s]+)\?=$/;
 
 /** decode a header line that may have an extra encoding in it */
 function decodeLine(line: string): string {
-  // TODO this might make more sense as a function as part of a regex replaceAll
   const match = encodeFormat.exec(line);
   if (match) {
     const [, charset, encoding, text] = match;
@@ -166,7 +165,6 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
       multipart = true;
     } else if (lower.startsWith("boundary=")) {
       bound = field.slice(9);
-      // TODO handling of quoted fields is not great
       if (bound.startsWith('"') && bound.endsWith('"')) {
         bound = bound.slice(1, -1);
       }
