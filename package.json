@@ -36,12 +36,13 @@
     "lint": "tsc && biome check && typedoc --emit none",
     "doc": "typedoc",
     "export": "tsc -p tsconfig.build.json && bun build src/index.ts --minify --outfile dist/mhtml.esm.min.js",
-    "prepack": "bun lint && bun test --coverage && bun export && publint"
+    "prepack": "bun lint && bun test --coverage && bun export && publint --strict && npm_config_ignore_scripts=true attw --pack --profile esm-only"
   },
   "dependencies": {
     "base64-js": "^1.5.1"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.4",
     "@biomejs/biome": "^2.4.15",
     "@types/base64-js": "^1.5.0",
     "@types/bun": "^1.3.14",

@@ -11,8 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-      - run: bun install
+      - run: bun install --frozen-lockfile
       - run: bun lint
       - run: bun test
       - run: bun export
-      - run: bunx publint
+      - run: bunx publint --strict
+      # attw --pack must ignore scripts, or its pack re-triggers prepack
+      - run: npm_config_ignore_scripts=true bunx @arethetypeswrong/cli --pack --profile esm-only
