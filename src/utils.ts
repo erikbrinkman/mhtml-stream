@@ -127,9 +127,6 @@ export async function collect(
   return concat(chunks);
 }
 
-// default new line character for quoted printable decoding
-const defaultNewLine = new Uint8Array([10]);
-
 // CRLF, the canonical MIME line separator the stream is split on
 const crlf = new Uint8Array([13, 10]);
 
@@ -137,16 +134,26 @@ const crlf = new Uint8Array([13, 10]);
  * decoder for quoted printable
  *
  * If quoted printable "lines" aren't escaped with an "=" then a new line needs
- * to be inserted. We use `newLine` which defaults to a single "\n".
+ * to be inserted. We use `newLine`, which defaults to CRLF to match the
+ * canonical MIME form; pass a custom separator (e.g. a single "\n") to
+ * normalize instead. The separator is emitted between lines, never after the
+ * last one, since the CRLF preceding the MIME boundary belongs to the
+ * delimiter, not the body.
  */
 export async function* decodeQuotedPrintable(
   lines: AsyncIterable<Uint8Array>,
-  newLine: Uint8Array = defaultNewLine,
+  newLine: Uint8Array = crlf,
 ): AsyncIterableIterator<Uint8Array> {
+  let pendingNewLine = false; // a hard line break from the previous line
   for await (const bytes of lines) {
     const res = new Uint8Array(bytes.length + newLine.length);
-    let softLine = false; // if newline wasn't escaped so we need to add
     let destInd = 0;
+    if (pendingNewLine) {
+      res.set(newLine, destInd);
+      destInd += newLine.length;
+      pendingNewLine = false;
+    }
+    let softLine = false; // if newline was escaped, so we shouldn't add one
     for (let ind = 0; ind < bytes.length; ++ind) {
       const code = bytes[ind]!;
       if (code >= 128) {
@@ -177,8 +184,7 @@ export async function* decodeQuotedPrintable(
       }
     }
     if (!softLine) {
-      res.set(newLine, destInd);
-      destInd += newLine.length;
+      pendingNewLine = true;
     }
     yield res.subarray(0, destInd);
   }

@@ -158,7 +158,23 @@ describe("decodeQuotedPrintable()", () => {
       ),
     );
     expect(res).toStrictEqual(
-      "key=value\nthis line continues on the next line\n",
+      "key=value\r\nthis line continues on the next line",
+    );
+  });
+
+  test("normalizes to a custom separator when given one", async () => {
+    // eslint-disable-next-line spellcheck/spell-checker
+    const input = ["key=3Dvalue", "this line continues =", "on the next line"];
+    const res = decoder.decode(
+      await collect(
+        decodeQuotedPrintable(
+          toAsyncIterable(input.map((l) => encoder.encode(l))),
+          new Uint8Array([10]),
+        ),
+      ),
+    );
+    expect(res).toStrictEqual(
+      "key=value\nthis line continues on the next line",
     );
   });
 
