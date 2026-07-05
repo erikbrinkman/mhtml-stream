@@ -7,7 +7,7 @@ import {
   decodeQuotedPrintable,
   indexOf,
   splitStream,
-} from "./utils";
+} from "./utils.js";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();

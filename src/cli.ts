@@ -1,7 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import { argv } from "bun";
 import yargs from "yargs";
-import { parseMhtml } from ".";
+import { parseMhtml } from "./index.js";
 
 async function* readFile(name: string): AsyncIterableIterator<Uint8Array> {
   const file = Bun.file(name);
