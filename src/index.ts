@@ -188,7 +188,28 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
 /** options for mhtml parsing */
 export interface ParseOptions {
   // eslint-disable-next-line spellcheck/spell-checker
-  /** custom decoders for other Content-Transfer-Encodings */
+  /**
+   * custom decoders keyed by (lowercased) Content-Transfer-Encoding
+   *
+   * Use these to handle an encoding the defaults don't, or to override one. A
+   * {@link Decoder} turns the CRLF-split lines of a part into its decoded
+   * bytes; the parser strips the CRLFs when splitting, so a passthrough decoder
+   * re-emits them between lines:
+   *
+   * ```ts
+   * const crlf = new Uint8Array([13, 10]);
+   * const decoderOverrides = new Map([
+   *   ["binary", async function* (lines) {
+   *     let first = true;
+   *     for await (const line of lines) {
+   *       if (!first) yield crlf;
+   *       first = false;
+   *       yield line;
+   *     }
+   *   }],
+   * ]);
+   * ```
+   */
   decoderOverrides?: Map<string, Decoder>;
 }
 
