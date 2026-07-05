@@ -5,10 +5,10 @@ MHTML Stream
 [![npm](https://img.shields.io/npm/v/mhtml-stream)](https://www.npmjs.com/package/mhtml-stream)
 [![license](https://img.shields.io/github/license/erikbrinkman/mhtml-stream)](LICENSE)
 
-Zero-dependency library for parsing MHTML data as streams using modern WHATWG
-streams and async iterators. Because it relies on modern cross javascript
-standards it works out-of-the-box in all javascript environments, with only a
-little tweaking necessary for module definitions.
+Library for parsing MHTML data as streams using modern WHATWG streams and async
+iterators. Because it relies on modern cross javascript standards it works
+out-of-the-box in all javascript environments, with only a little tweaking
+necessary for module definitions.
 
 Usage
 -----
@@ -39,3 +39,7 @@ Notes
   comes to whether whitespace should be added when unfolding. This currently
   uses the first whitespace character to indicate folding, and preservers any
   others.
+- Decoded part content preserves the original MIME line endings. The parser
+  splits the stream on `\r\n`, and the quoted-printable and 7bit/8bit decoders
+  re-insert that `\r\n` between lines, so extraction is lossless. Both decoders
+  accept a `newLine` argument if you'd rather normalize to `\n`.
