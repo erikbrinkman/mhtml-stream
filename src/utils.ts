@@ -204,12 +204,26 @@ const decoder = new TextDecoder();
 
 /**
  * decoder for base64
+ *
+ * RFC 2045 requires decoders to ignore line breaks and decode the concatenated
+ * stream, so producers may wrap at any column. We strip whitespace and buffer
+ * characters that don't yet form a complete four-character quantum, flushing
+ * the remainder at the end of the part.
  */
 export async function* decodeBase64(
   lines: AsyncIterable<Uint8Array>,
 ): AsyncIterableIterator<Uint8Array> {
+  let residual = "";
   for await (const bytes of lines) {
-    yield toByteArray(decoder.decode(bytes));
+    residual += decoder.decode(bytes).replace(/\s/g, "");
+    const usable = residual.length - (residual.length % 4);
+    if (usable > 0) {
+      yield toByteArray(residual.slice(0, usable));
+      residual = residual.slice(usable);
+    }
+  }
+  if (residual.length > 0) {
+    yield toByteArray(residual);
   }
 }
 
