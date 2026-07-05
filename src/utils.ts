@@ -130,6 +130,15 @@ export async function collect(
 // CRLF, the canonical MIME line separator the stream is split on
 const crlf = new Uint8Array([13, 10]);
 
+/** whether a character code is a hex digit (0-9, A-F, a-f) */
+export function isHexDigit(code: number): boolean {
+  return (
+    (code >= 48 && code <= 57) ||
+    (code >= 65 && code <= 70) ||
+    (code >= 97 && code <= 102)
+  );
+}
+
 /**
  * decoder for quoted printable
  *
@@ -175,11 +184,12 @@ export async function* decodeQuotedPrintable(
             throw new Error(
               "quoted printable escape (=) was not followed by two bytes",
             );
+          } else if (!isHexDigit(first) || !isHexDigit(second)) {
+            throw new Error(
+              `quoted printable escape (=) was not followed by two hex digits: "=${String.fromCharCode(first, second)}"`,
+            );
           }
-          let val = parseInt(String.fromCharCode(first), 16);
-          val *= 16;
-          val += parseInt(String.fromCharCode(second), 16);
-          res[destInd++] = val;
+          res[destInd++] = parseInt(String.fromCharCode(first, second), 16);
         }
       }
     }

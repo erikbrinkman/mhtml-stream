@@ -155,6 +155,17 @@ Subject: =?iso-8859-1?Q?=A1Hola,\xffse=F1or!?=
     );
   });
 
+  test("fails on invalid hex in q-encoding", async () => {
+    const content = `MIME-Version: 1.0
+Subject: =?utf-8?Q?a=ZZb?=
+`;
+    const parser = parseMhtml(stringToStream(content));
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
+    await expect(consume(parser)).rejects.toThrow(
+      "got invalid hex escape when decoding q-quoted word",
+    );
+  });
+
   test("fails without empty header delimiter", async () => {
     const content = `MIME-Version: 1.0`;
     const parser = parseMhtml(stringToStream(content));

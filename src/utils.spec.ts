@@ -207,6 +207,21 @@ describe("decodeQuotedPrintable()", () => {
       })(),
     ).rejects.toThrow("quoted printable escape");
   });
+
+  test("non-hex escape failure", async () => {
+    const input = ["a=ZZb"];
+    const decoded = decodeQuotedPrintable(
+      toAsyncIterable(input.map((l) => encoder.encode(l))),
+    );
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
+    await expect(
+      (async () => {
+        for await (const _ of decoded) {
+          //
+        }
+      })(),
+    ).rejects.toThrow("two hex digits");
+  });
 });
 
 describe("decodeIdentity()", () => {
