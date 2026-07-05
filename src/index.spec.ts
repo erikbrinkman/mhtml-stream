@@ -155,6 +155,28 @@ Subject: =?iso-8859-1?Q?=A1Hola,\xffse=F1or!?=
     );
   });
 
+  test("decodes base64 wrapped at a non-multiple-of-4 column", async () => {
+    // "hello world hello world" wrapped at column 23 (not a multiple of 4)
+    const content = `MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary=frontier
+
+--frontier
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+
+aGVsbG8gd29ybGQgaGVsbG8
+gd29ybGQ=
+--frontier--
+`;
+    const files = [];
+    for await (const file of parseMhtml(stringToStream(content))) {
+      files.push(file);
+    }
+    expect(decoder.decode(files[1]!.content)).toStrictEqual(
+      "hello world hello world",
+    );
+  });
+
   test("matches header names and encodings case-insensitively", async () => {
     const content = `mime-version: 1.0
 content-type: MULTIPART/mixed; BOUNDARY=frontier
