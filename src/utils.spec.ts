@@ -193,14 +193,39 @@ describe("decodeQuotedPrintable()", () => {
   });
 });
 
-test("decodeIdentity()", async () => {
-  const input = ["line ", "not ascii \xff"];
-  const res = decoder.decode(
-    await collect(
-      decodeIdentity(toAsyncIterable(input.map((l) => encoder.encode(l)))),
-    ),
-  );
-  expect(res).toStrictEqual("line not ascii \xff");
+describe("decodeIdentity()", () => {
+  test("passes bytes through", async () => {
+    const input = ["line ", "not ascii \xff"];
+    const res = decoder.decode(
+      await collect(
+        decodeIdentity(toAsyncIterable(input.map((l) => encoder.encode(l)))),
+      ),
+    );
+    expect(res).toStrictEqual("line \r\nnot ascii \xff");
+  });
+
+  test("reinserts CRLF between lines", async () => {
+    const input = ["line one", "line two", "line three"];
+    const res = decoder.decode(
+      await collect(
+        decodeIdentity(toAsyncIterable(input.map((l) => encoder.encode(l)))),
+      ),
+    );
+    expect(res).toStrictEqual("line one\r\nline two\r\nline three");
+  });
+
+  test("normalizes to a custom separator when given one", async () => {
+    const input = ["line one", "line two"];
+    const res = decoder.decode(
+      await collect(
+        decodeIdentity(
+          toAsyncIterable(input.map((l) => encoder.encode(l))),
+          new Uint8Array([10]),
+        ),
+      ),
+    );
+    expect(res).toStrictEqual("line one\nline two");
+  });
 });
 
 test("decodeBinary()", () => {
