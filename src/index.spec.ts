@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { parseMhtml } from ".";
-import { Headers } from "./headers";
+import { Headers } from "./headers.js";
+import { parseMhtml } from "./index.js";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();

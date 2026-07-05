@@ -1,5 +1,5 @@
 import { toByteArray } from "base64-js";
-import { Headers, type MhtmlHeaders } from "./headers";
+import { Headers, type MhtmlHeaders } from "./headers.js";
 import {
   bytesEqual,
   collect,
@@ -9,7 +9,7 @@ import {
   decodeQuotedPrintable,
   isHexDigit,
   splitStream,
-} from "./utils";
+} from "./utils.js";
 
 export type { MhtmlHeaders };
 
