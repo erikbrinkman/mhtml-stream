@@ -260,6 +260,6 @@ export async function* decodeIdentity(
  */
 export function decodeBinary(): never {
   throw new Error(
-    "binary transfer-encoding is explicitly not supported and trying to add an implementation will likely result in unexpected results, but if you want to ignore anyway, set binary to `decode8bit`",
+    "binary transfer-encoding is explicitly not supported and trying to add an implementation will likely result in unexpected results, but if you want to handle it anyway, override `binary` in `decoderOverrides`",
   );
 }
