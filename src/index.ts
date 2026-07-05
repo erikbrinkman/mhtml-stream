@@ -240,7 +240,6 @@ export async function* parseMhtml(
     const headers = await parseHeaders(lines);
     const [boundary, terminus] = bound ?? (bound = getBoundary(headers));
 
-    // Content-Transfer-Encoding token values are case-insensitive (RFC 2045)
     const encoding = (
       headers.get("Content-Transfer-Encoding") ?? "7bit"
     ).toLowerCase();
