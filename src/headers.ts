@@ -57,29 +57,31 @@ export interface MhtmlHeaders extends Iterable<[string, string]> {
 }
 
 export class Headers implements MhtmlHeaders {
-  #raw = new Map<string, string[]>();
+  // keyed by lowercased name; the original name casing (first seen) is
+  // preserved for iteration while lookups are case-insensitive, per RFC 5322
+  #raw = new Map<string, { key: string; values: string[] }>();
 
   [Symbol.iterator](): Iterator<[string, string]> {
     return this.entries();
   }
 
   append(key: string, value: string): void {
-    const list = this.#raw.get(key);
-    if (list === undefined) {
-      this.#raw.set(key, [value]);
+    const entry = this.#raw.get(key.toLowerCase());
+    if (entry === undefined) {
+      this.#raw.set(key.toLowerCase(), { key, values: [value] });
     } else {
-      list.push(value);
+      entry.values.push(value);
     }
   }
 
   *entries(delim: string = ", "): IterableIterator<[string, string]> {
-    for (const [key, values] of this.#raw.entries()) {
+    for (const { key, values } of this.#raw.values()) {
       yield [key, values.join(delim)];
     }
   }
 
   *entriesAll(): IterableIterator<[string, string]> {
-    for (const [key, values] of this.#raw.entries()) {
+    for (const { key, values } of this.#raw.values()) {
       for (const val of values) {
         yield [key, val];
       }
@@ -87,35 +89,37 @@ export class Headers implements MhtmlHeaders {
   }
 
   get(key: string, delim: string = ", "): string | null {
-    const vals = this.#raw.get(key);
-    if (vals === undefined) {
+    const entry = this.#raw.get(key.toLowerCase());
+    if (entry === undefined) {
       return null;
     } else {
-      return vals.join(delim);
+      return entry.values.join(delim);
     }
   }
 
   getAll(key: string): string[] {
-    return this.#raw.get(key) ?? [];
+    return this.#raw.get(key.toLowerCase())?.values ?? [];
   }
 
   has(key: string): boolean {
-    return this.#raw.has(key);
+    return this.#raw.has(key.toLowerCase());
   }
 
-  keys(): Iterable<string> {
-    return this.#raw.keys();
+  *keys(): IterableIterator<string> {
+    for (const { key } of this.#raw.values()) {
+      yield key;
+    }
   }
 
   *values(delim: string = ", "): IterableIterator<string> {
-    for (const vals of this.#raw.values()) {
-      yield vals.join(delim);
+    for (const { values } of this.#raw.values()) {
+      yield values.join(delim);
     }
   }
 
   *valuesAll(): IterableIterator<string> {
-    for (const vals of this.#raw.values()) {
-      yield* vals;
+    for (const { values } of this.#raw.values()) {
+      yield* values;
     }
   }
 }

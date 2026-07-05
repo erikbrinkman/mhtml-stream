@@ -161,9 +161,12 @@ function getBoundary(headers: MhtmlHeaders): [Uint8Array, Uint8Array] {
   let bound: string | undefined;
   let multipart = false;
   for (const field of contentType.split(/;\s*/)) {
-    if (field.startsWith("multipart/")) {
+    // the media type and the boundary parameter name are case-insensitive, but
+    // the boundary value itself is not, so match on a lowercased copy
+    const lower = field.toLowerCase();
+    if (lower.startsWith("multipart/")) {
       multipart = true;
-    } else if (field.startsWith("boundary=")) {
+    } else if (lower.startsWith("boundary=")) {
       bound = field.slice(9);
       // TODO handling of quoted fields is not great
       if (bound.startsWith('"') && bound.endsWith('"')) {
@@ -216,7 +219,10 @@ export async function* parseMhtml(
     const headers = await parseHeaders(lines);
     const [boundary, terminus] = bound ?? (bound = getBoundary(headers));
 
-    const encoding = headers.get("Content-Transfer-Encoding") ?? "7bit";
+    // Content-Transfer-Encoding token values are case-insensitive (RFC 2045)
+    const encoding = (
+      headers.get("Content-Transfer-Encoding") ?? "7bit"
+    ).toLowerCase();
     const decode = decoders.get(encoding);
     if (decode === undefined) {
       throw new Error(`unhandled encoding type: ${encoding}`);
