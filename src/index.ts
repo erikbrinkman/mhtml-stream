@@ -7,6 +7,7 @@ import {
   decodeBinary,
   decodeIdentity,
   decodeQuotedPrintable,
+  isHexDigit,
   splitStream,
 } from "./utils";
 
@@ -33,9 +34,14 @@ function decodeQEncoding(text: string): Uint8Array {
       val = 32;
     } else if (code === 61) {
       // encoded character
-      val = parseInt(text[++ind]!, 16);
-      val *= 16;
-      val += parseInt(text[++ind]!, 16);
+      const high = text.charCodeAt(++ind);
+      const low = text.charCodeAt(++ind);
+      if (!isHexDigit(high) || !isHexDigit(low)) {
+        throw new Error(
+          `got invalid hex escape when decoding q-quoted word: "${text}"`,
+        );
+      }
+      val = parseInt(String.fromCharCode(high, low), 16);
     } else {
       // residual ascii
       val = code;
