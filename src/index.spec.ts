@@ -6,7 +6,6 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 // from https://en.wikipedia.org/wiki/MIME#Multipart_messages
-// eslint-disable-next-line spellcheck/spell-checker
 const example = `MIME-Version: 1.0
 Subject: =?iso-8859-1?Q?=A1Hola,_se=F1or!?=
 Content-Type: multipart/mixed; boundary=frontier
@@ -39,7 +38,6 @@ Content-Type: multipart/related;
 ------MultipartBoundary--NYswbLinUCqE8KaJecg8DEV6giqFeyGLtHeT0qLB4h------
 `;
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function* stringToStream(
   file: string,
 ): AsyncIterableIterator<Uint8Array> {
@@ -62,7 +60,6 @@ describe("parseMhtml()", () => {
     const expectedHeaders = [
       {
         "MIME-Version": "1.0",
-        // eslint-disable-next-line spellcheck/spell-checker
         Subject: "¡Hola, señor!",
         "Content-Type": "multipart/mixed; boundary=frontier",
       },
@@ -86,7 +83,6 @@ describe("parseMhtml()", () => {
   });
 
   test("other headers", async () => {
-    // eslint-disable-next-line spellcheck/spell-checker
     const content = `MIME-Version: 1.0
 From: this is a wrapped: header
   with an extra delimiter in: both sections
@@ -125,7 +121,6 @@ This is a message with multiple parts in MIME format.
     const headers = files.map(({ headers }) => Object.fromEntries(headers));
     const expectedHeaders = [
       {
-        // eslint-disable-next-line spellcheck/spell-checker
         "Content-Type": `multipart/related;type="text/html";boundary="----MultipartBoundary--NYswbLinUCqE8KaJecg8DEV6giqFeyGLtHeT0qLB4h----"`,
         Date: "Sat, 16 Apr 2022 17:48:31 -0000",
         From: "<Saved by Blink>",
@@ -133,7 +128,6 @@ This is a message with multiple parts in MIME format.
         "Snapshot-Content-Location":
           "https://www.newyorker.com/culture/cultural-comment/what-the-twilight-zone-reveals-about-todays-prestige-tv",
         Subject:
-          // eslint-disable-next-line spellcheck/spell-checker
           "What “The Twilight Zone” Reveals About Today’s Prestige TV | The New Yorker",
       },
     ];
@@ -144,12 +138,10 @@ This is a message with multiple parts in MIME format.
   });
 
   test("fails non-ascii in q-encoding", async () => {
-    // eslint-disable-next-line spellcheck/spell-checker
     const content = `MIME-Version: 1.0
 Subject: =?iso-8859-1?Q?=A1Hola,\xffse=F1or!?=
 `;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "got non-ascii character when decoding q-quoted word",
     );
@@ -237,7 +229,6 @@ This is a message with multiple parts in MIME format.
 Subject: =?utf-8?Q?a=ZZb?=
 `;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "got invalid hex escape when decoding q-quoted word",
     );
@@ -246,7 +237,6 @@ Subject: =?utf-8?Q?a=ZZb?=
   test("fails without empty header delimiter", async () => {
     const content = `MIME-Version: 1.0`;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "didn't find an empty line to signify the end of header parsing",
     );
@@ -258,7 +248,6 @@ invalid header
 
 `;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "header line didn't have key-value delimiter",
     );
@@ -269,7 +258,6 @@ invalid header
 
 `;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "first headers didn't contain a content type",
     );
@@ -281,7 +269,6 @@ Content-Type: text/plain; boundary=frontier
 
 `;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "first content type header didn't contain",
     );
@@ -293,7 +280,6 @@ Content-Type: multipart/mixed
 
 `;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "first content type header didn't contain",
     );
@@ -306,7 +292,6 @@ Content-Type: multipart/mixed; boundary=frontier
 
 `;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "unhandled encoding type: unknown",
     );
@@ -319,7 +304,6 @@ Content-Type: multipart/mixed; boundary=frontier
 This is a message with multiple parts in MIME format.
 `;
     const parser = parseMhtml(stringToStream(content));
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression,@typescript-eslint/await-thenable
     await expect(consume(parser)).rejects.toThrow(
       "stream didn't end with the appropriate termination boundary",
     );
