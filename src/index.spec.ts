@@ -155,6 +155,32 @@ Subject: =?iso-8859-1?Q?=A1Hola,\xffse=F1or!?=
     );
   });
 
+  test("accepts headers without a space after the colon", async () => {
+    const content = `MIME-Version:1.0
+Content-Type:multipart/mixed; boundary=frontier
+X-Empty:
+
+This is a message with multiple parts in MIME format.
+--frontier--
+`;
+    const files = [];
+    for await (const file of parseMhtml(stringToStream(content))) {
+      files.push(file);
+    }
+    const headers = files.map(({ headers }) => Object.fromEntries(headers));
+    expect(headers).toEqual([
+      {
+        "MIME-Version": "1.0",
+        "Content-Type": "multipart/mixed; boundary=frontier",
+        "X-Empty": "",
+      },
+    ]);
+    const text = files.map(({ content }) => decoder.decode(content));
+    expect(text).toEqual([
+      "This is a message with multiple parts in MIME format.",
+    ]);
+  });
+
   test("fails on invalid hex in q-encoding", async () => {
     const content = `MIME-Version: 1.0
 Subject: =?utf-8?Q?a=ZZb?=

@@ -102,14 +102,14 @@ async function parseHeaders(
         headers.append(key, val);
       }
       if (line) {
-        const delim = line.indexOf(": ");
+        const delim = line.indexOf(":");
         if (delim === -1) {
           throw new Error(
             `header line didn't have key-value delimiter: "${line}"`,
           );
         }
         key = line.slice(0, delim);
-        val = decodeLine(line.slice(delim + 2));
+        val = decodeLine(line.slice(delim + 1).replace(/^\s+/, ""));
       } else {
         return headers;
       }
