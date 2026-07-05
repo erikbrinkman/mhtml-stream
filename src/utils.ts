@@ -127,7 +127,6 @@ export async function collect(
   return concat(chunks);
 }
 
-// CRLF, the canonical MIME line separator the stream is split on
 const crlf = new Uint8Array([13, 10]);
 
 /** whether a character code is a hex digit (0-9, A-F, a-f) */
@@ -145,9 +144,8 @@ export function isHexDigit(code: number): boolean {
  * If quoted printable "lines" aren't escaped with an "=" then a new line needs
  * to be inserted. We use `newLine`, which defaults to CRLF to match the
  * canonical MIME form; pass a custom separator (e.g. a single "\n") to
- * normalize instead. The separator is emitted between lines, never after the
- * last one, since the CRLF preceding the MIME boundary belongs to the
- * delimiter, not the body.
+ * normalize instead. The separator goes between lines; the CRLF before the MIME
+ * boundary belongs to the delimiter, not the body.
  */
 export async function* decodeQuotedPrintable(
   lines: AsyncIterable<Uint8Array>,
@@ -234,8 +232,8 @@ export async function* decodeBase64(
  * payload as-is. parseMhtml splits the stream on CRLF to find part boundaries,
  * so we re-insert `newLine` (defaulting to CRLF) between lines to restore the
  * original bytes exactly. Pass `newLine` (e.g. a single "\n") to normalize line
- * endings instead. The separator is emitted between lines, never after the last
- * one, since the CRLF preceding the boundary belongs to the delimiter.
+ * endings instead. The separator goes between lines; the CRLF before the
+ * boundary belongs to the delimiter, not the body.
  */
 export async function* decodeIdentity(
   lines: AsyncIterable<Uint8Array>,
