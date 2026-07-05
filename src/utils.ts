@@ -130,6 +130,9 @@ export async function collect(
 // default new line character for quoted printable decoding
 const defaultNewLine = new Uint8Array([10]);
 
+// CRLF, the canonical MIME line separator the stream is split on
+const crlf = new Uint8Array([13, 10]);
+
 /**
  * decoder for quoted printable
  *
@@ -196,11 +199,25 @@ export async function* decodeBase64(
 
 /**
  * decoder for 7bit and 8bit
+ *
+ * 7bit/8bit apply no transfer transformation, so the content bytes are the
+ * payload as-is. parseMhtml splits the stream on CRLF to find part boundaries,
+ * so we re-insert `newLine` (defaulting to CRLF) between lines to restore the
+ * original bytes exactly. Pass `newLine` (e.g. a single "\n") to normalize line
+ * endings instead. The separator is emitted between lines, never after the last
+ * one, since the CRLF preceding the boundary belongs to the delimiter.
  */
 export async function* decodeIdentity(
   lines: AsyncIterable<Uint8Array>,
+  newLine: Uint8Array = crlf,
 ): AsyncIterableIterator<Uint8Array> {
+  let first = true;
   for await (const bytes of lines) {
+    if (first) {
+      first = false;
+    } else {
+      yield newLine;
+    }
     yield bytes;
   }
 }
